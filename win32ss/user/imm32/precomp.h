@@ -84,15 +84,6 @@
 
 #define REGKEY_KEYBOARD_LAYOUTS     L"System\\CurrentControlSet\\Control\\Keyboard Layouts"
 
-#define ROUNDUP4(n) (((n) + 3) & ~3)  /* DWORD alignment */
-
-typedef struct REG_IME
-{
-    HKL hKL;
-    WCHAR szImeKey[20];     /* "E0XXYYYY": "E0XX" is the device handle. "YYYY" is a LANGID. */
-    WCHAR szFileName[80];   /* The IME module filename */
-} REG_IME, *PREG_IME;
-
 extern HMODULE ghImm32Inst;
 extern RTL_CRITICAL_SECTION gcsImeDpi;
 extern PIMEDPI gpImeDpiList;
@@ -120,10 +111,11 @@ LONG APIENTRY IchAnsiFromWide(LONG cchWide, LPCWSTR pchWide, UINT uCodePage);
 PIMEDPI APIENTRY Imm32FindOrLoadImeDpi(HKL hKL);
 LPINPUTCONTEXT APIENTRY Imm32InternalLockIMC(HIMC hIMC, BOOL fSelect);
 BOOL APIENTRY Imm32ReleaseIME(HKL hKL);
-BOOL APIENTRY Imm32IsSystemJapaneseOrKorean(VOID);
+BOOL Imm32IsSystemJapaneseOrKorean(VOID);
 BOOL APIENTRY Imm32IsCrossThreadAccess(HIMC hIMC);
 BOOL APIENTRY Imm32IsCrossProcessAccess(HWND hWnd);
-BOOL WINAPI Imm32IsImcAnsi(HIMC hIMC);
+BOOL Imm32IsImcAnsi(HIMC hIMC);
+BOOL Imm32LoadImeVerInfo(_Out_ PIMEINFOEX pImeInfoEx);
 
 #define ImeDpi_IsUnicode(pImeDpi)      ((pImeDpi)->ImeInfo.fdwProperty & IME_PROP_UNICODE)
 
@@ -159,17 +151,20 @@ Imm32ReconvertAnsiFromWide(LPRECONVERTSTRING pDest, const RECONVERTSTRING *pSrc,
 DWORD APIENTRY
 Imm32ReconvertWideFromAnsi(LPRECONVERTSTRING pDest, const RECONVERTSTRING *pSrc, UINT uCodePage);
 
-HRESULT APIENTRY Imm32StrToUInt(LPCWSTR pszText, LPDWORD pdwValue, ULONG nBase);
-HRESULT APIENTRY Imm32UIntToStr(DWORD dwValue, ULONG nBase, LPWSTR pszBuff, USHORT cchBuff);
-BOOL APIENTRY Imm32LoadImeVerInfo(PIMEINFOEX pImeInfoEx);
-UINT APIENTRY Imm32GetImeLayout(PREG_IME pLayouts, UINT cLayouts);
-BOOL APIENTRY Imm32WriteImeLayout(HKL hKL, LPCWSTR pchFilePart, LPCWSTR pszLayoutText);
-HKL APIENTRY Imm32AssignNewLayout(UINT cKLs, const REG_IME *pLayouts, WORD wLangID);
-BOOL APIENTRY Imm32CopyImeFile(LPWSTR pszOldFile, LPCWSTR pszNewFile);
-PTHREADINFO FASTCALL Imm32CurrentPti(VOID);
+HRESULT
+Imm32StrToUInt(
+    _In_ PCWSTR pszText,
+    _Out_ PDWORD pdwValue,
+    _In_ ULONG nBase);
 
-HBITMAP Imm32LoadBitmapFromBytes(const BYTE *pb);
-BOOL Imm32StoreBitmapToBytes(HBITMAP hbm, LPBYTE pbData, DWORD cbDataMax);
+HRESULT
+Imm32UIntToStr(
+    _In_ DWORD dwValue,
+    _In_ ULONG nBase,
+    _Out_ PWSTR pszBuff,
+    _In_ USHORT cchBuff);
+
+PTHREADINFO FASTCALL Imm32CurrentPti(VOID);
 
 HRESULT CtfImmTIMCreateInputContext(_In_ HIMC hIMC);
 HRESULT CtfImmTIMDestroyInputContext(_In_ HIMC hIMC);

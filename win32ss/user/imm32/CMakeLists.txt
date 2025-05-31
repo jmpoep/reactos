@@ -3,8 +3,6 @@ include_directories(
     ${REACTOS_SOURCE_DIR}/sdk/include/reactos/wine
     ${REACTOS_SOURCE_DIR}/win32ss/include)
 
-add_definitions(-D__WINESRC__)
-
 spec2def(imm32.dll imm32.spec ADD_IMPORTLIB)
 
 list(APPEND SOURCE
@@ -14,7 +12,9 @@ list(APPEND SOURCE
     guideline.c
     ime.c
     imemenu.c
+    imepro.c
     imm.c
+    install.c
     keymsg.c
     regword.c
     softkbd.c
