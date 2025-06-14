@@ -187,14 +187,6 @@ UINT
 GetDfmCmd(_In_ IContextMenu *pCM, _In_ LPCSTR verba);
 #define SHELL_ExecuteControlPanelCPL(hwnd, cpl) SHRunControlPanel((cpl), (hwnd))
 
-#define CmicFlagsToSeeFlags(flags)  ((flags) & SEE_CMIC_COMMON_FLAGS)
-static inline UINT SeeFlagsToCmicFlags(UINT flags)
-{
-    if (flags & SEE_MASK_CLASSNAME)
-        flags &= ~(SEE_MASK_HASLINKNAME | SEE_MASK_HASTITLE);
-    return flags & SEE_CMIC_COMMON_FLAGS;
-}
-
 
 // CStubWindow32 --- The owner window of file property sheets.
 // This window hides taskbar button of property sheet.
@@ -262,6 +254,13 @@ SHELL_GetUIObjectOfAbsoluteItem(
     _In_opt_ HWND hWnd,
     _In_ PCIDLIST_ABSOLUTE pidl,
     _In_ REFIID riid, _Out_ void **ppvObj);
+
+HRESULT
+SHELL_DisplayNameOf(
+    _In_opt_ IShellFolder *psf,
+    _In_ LPCITEMIDLIST pidl,
+    _In_opt_ UINT Flags,
+    _Out_ PWSTR *ppStr);
 
 DWORD
 SHGetAttributes(_In_ IShellFolder *psf, _In_ LPCITEMIDLIST pidl, _In_ DWORD dwAttributes);
